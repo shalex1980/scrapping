@@ -1,13 +1,8 @@
 const cheerio = require("cheerio");
 const axios = require("axios");
 
-const siteUrl = 'https://remoteok.io/';
-let siteName = "";
+const siteUrl = 'https://www.amazon.com/Fluval-Carbon-Cartridge-Filter-Media/dp/B07NWY7CS1/';
 
-const categories = new Set();
-const tags = new Set();
-const locations = new Set();
-const positions = new Set();
 
 const fetchData = async () => {
   const result = await axios.get(siteUrl);
@@ -16,31 +11,13 @@ const fetchData = async () => {
 
 const getResults = async () => {
   const $ = await fetchData();
-  siteName = $('.top > .action-post-job').text();
-
-  $('.tags .tag').each((index, element) => {
-    tags.add($(element).text());
-  })
-
-  $('.location').each((index, element) => {
-    locations.add($(element).text());
-  })
-
-  $('div .nav p').each((index, element) => {
-    categories.add($(element).text());
-  })
-
-  $('.company_and_position [itemprop="title"]')
-  .each((index, element) => {
-    positions.add($(element).text());
-  });
-
+ 
   return {
-    positions: [...positions].sort(),
-    tags: [...tags].sort(),
-    locations: [...locations].sort(),
-    categories: [...categories].sort(),
-    siteName,
+    title: $('#productTitle').text(),
+    price: $('#priceblock_ourprice').text(),
+    BSR: $('#SalesRank').text(),
+    categories: $('.a-list-item > a').text(),
+    siteName: $('span.nav-logo-base').text(),
   }
 }
 
